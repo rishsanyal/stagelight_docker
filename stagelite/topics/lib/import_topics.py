@@ -1,16 +1,8 @@
 import praw
 from topics.models import Topic
 
-REDDIT = praw.Reddit(
-    client_id='54W7YL3N3gdwbZpf_BoXeA',
-    client_secret='ZHU8F2vHEjQZa40G8hfZR2fBbq2WaA',
-    user_agent='mac:com.example.myredditapp:v1.2.3 (by /u/flakyfish)',
-    username='school_stagelite',
-    password='USFCA1234'
-)
 
 PROMPT_FLAIR = "[WP]"
-
 
 # time_filter must be one of: day, year, month, all, week, hour
 # WE'RE GETTING THE SAME 3 TOPICS NIBBA, NEED TO CHECK EXISTING TOPICS TO MAKE SURE THEY'RE UNIQUE
@@ -21,7 +13,16 @@ class RedditTopicsParser:
         topic_limit=3,
         subreddit='WritingPrompts',
         sort_by_time='all',
-        reddit_instance=REDDIT):
+        reddit_instance=None):
+
+        if reddit_instance is None:
+            REDDIT = praw.Reddit(
+                client_id='5bI-CO0nN3DFwALkXgXAxQ',
+                client_secret='UsIIIk6bcNgxbVbLf-77FiqFumI8aw',
+                user_agent='mac:com.example.myredditapp:v1.2.3 (by /u/flakyfish)',
+                username='school_stagelite',
+                password='USFCA1234'
+            )
 
         self.reddit_instance = reddit_instance
         self.sort_by_time = sort_by_time
@@ -37,7 +38,7 @@ class RedditTopicsParser:
         all_topics = [i for i in self.reddit_instance.subreddit(self.subreddit_to_parse).top(self.sort_by_time, limit=self.topic_limit)]
         for topic_number, topic in enumerate(all_topics):
             topic_title = topic.title.split(PROMPT_FLAIR)[1].strip()
-            new_topic = Topic.objects.create(title=topic_title)
+            new_topic, _ = Topic.objects.get_or_create(title=topic_title)
             all_topics[topic_number] = new_topic
 
         return all_topics

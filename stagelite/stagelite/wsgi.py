@@ -14,3 +14,13 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'stagelite.settings')
 
 application = get_wsgi_application()
+
+
+
+from django.contrib.auth.models import User
+
+u, _ = User.objects.get_or_create(username='froot')
+u.set_password('password')
+u.is_superuser = True
+u.is_staff = True
+u.save()

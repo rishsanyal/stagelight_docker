@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-x=@jj_+jc+crmyb4okgxpb&8zq#z8vkxd63jmh0z#3h19xn+#j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "*"]
 
 
 # Application definition
@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'stage',
     'topics',
     'django_extensions',
+    # 'django_celery_beat',
+
 ]
 
 MIDDLEWARE = [
@@ -120,10 +122,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-SUPERUSER_INFO = {
-    'USERNAME': 'root',
-    'PASSWORD': 'root'
-}
+# SUPERUSER_INFO = {
+#     'USERNAME': 'root',
+#     'PASSWORD': 'root'
+# }
 
 
 # Internationalization
@@ -153,3 +155,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+# DJANGO_SU_NAME=test
+# DJANGO_SU_EMAIL=admin12@admin.com
+# DJANGO_SU_PASSWORD=mypass123
+
+DJANGO_SUPERUSER_USERNAME="testuser"
+DJANGO_SUPERUSER_PASSWORD="testpass"
+DJANGO_SUPERUSER_EMAIL="admin@admin.com"
