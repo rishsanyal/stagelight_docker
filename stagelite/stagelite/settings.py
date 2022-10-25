@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'stage',
     'topics',
     'django_extensions',
+    'celery_admin',
     # 'django_celery_beat',
 
 ]

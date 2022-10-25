@@ -12,6 +12,7 @@ decorator==4.4.2
 Django==3.0.4
 django-extensions==2.2.9
 djangorestframework==3.11.0
+django-celery-admin
 flower==0.9.3
 idna==2.9
 importlib-metadata==1.5.2

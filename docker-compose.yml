@@ -31,7 +31,8 @@ services:
     restart: always
     build:
       context: .
-    command: "cd stagelite && celery -A topics worker -l info"
+      dockerfile: dockerfile
+    command: "celery -A topics worker -l info"
     volumes:
       - ./stagelite:/stagelite
     env_file:
@@ -39,20 +40,24 @@ services:
     depends_on:
       - db
       - redis
+      - rabbitmq
       - app
   celery_flower:
     restart: always
     build:
       context: .
-    command: "cd stagelite && celery -A topics flower"
-    volumes:
-      - ./stagelite:/stagelite
+    ports:
+      - "5555:5555"
     env_file:
       - ./.env.dev
+    command: "celery -A topics flower"
+    volumes:
+      - ./stagelite:/stagelite
     depends_on:
       - db
       - redis
       - app
+      - rabbitmq
       - celery
   frontend:
     build:
