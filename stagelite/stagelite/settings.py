@@ -44,11 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
+    # 'celery_admin',
     'stage',
     'topics',
     'django_extensions',
-    'django_celery_beat',
-
 ]
 
 MIDDLEWARE = [
@@ -170,11 +170,21 @@ DJANGO_SUPERUSER_USERNAME="testuser"
 DJANGO_SUPERUSER_PASSWORD="testpass"
 DJANGO_SUPERUSER_EMAIL="admin@admin.com"
 
-app.conf.beat_schedule = {
-    'add-every-30-seconds': {
-        'task': 'topics.tasks.add',
-        'schedule': 30.0,
-        'args': (16, 16)
-    },
-}
-app.conf.timezone = 'UTC'
+# app.conf.beat_schedule = {
+#     'add-every-30-seconds': {
+#         'task': 'topics.tasks.add',
+#         'schedule': 30.0, # 30 seconds
+#         'args': (16, 16)
+#     },
+#     'notify_user_of_new_topic': {
+#         'task': 'topics.tasks.notify_user_of_new_topic',
+#         'schedule': 60*60*24, # Once a day
+#         'args': ()
+#     },
+#     'import_reddit_topics': {
+#         'task': 'topics.tasks.import_reddit_topics',
+#         'schedule': 60*60*24, # Once a day
+#         'args': ()
+#     },
+# # }
+# app.conf.timezone = 'UTC'

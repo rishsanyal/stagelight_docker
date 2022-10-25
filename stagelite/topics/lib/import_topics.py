@@ -10,13 +10,13 @@ PROMPT_FLAIR = "[WP]"
 class RedditTopicsParser:
     def __init__(
         self,
-        topic_limit=3,
+        topic_limit=5,
         subreddit='WritingPrompts',
         sort_by_time='all',
         reddit_instance=None):
 
         if reddit_instance is None:
-            REDDIT = praw.Reddit(
+            reddit_instance = praw.Reddit(
                 client_id='5bI-CO0nN3DFwALkXgXAxQ',
                 client_secret='UsIIIk6bcNgxbVbLf-77FiqFumI8aw',
                 user_agent='mac:com.example.myredditapp:v1.2.3 (by /u/flakyfish)',
@@ -34,10 +34,9 @@ class RedditTopicsParser:
         return all_topics
 
     def parse_and_populate_topics(self):
-
         all_topics = [i for i in self.reddit_instance.subreddit(self.subreddit_to_parse).top(self.sort_by_time, limit=self.topic_limit)]
         for topic_number, topic in enumerate(all_topics):
-            topic_title = topic.title.split(PROMPT_FLAIR)[1].strip()
+            topic_title = str(topic.title.split("[WP]")[1].strip())
             new_topic, _ = Topic.objects.get_or_create(title=topic_title)
             all_topics[topic_number] = new_topic
 

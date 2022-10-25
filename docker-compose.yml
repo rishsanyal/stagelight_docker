@@ -2,8 +2,13 @@ version: '3'
 
 services:
   app:
+    restart: always
     build:
       context: .
+      dockerfile: dockerfile
+    environment:
+      - MJ_APIKEY_PUBLIC=466f87960616cd45aac376cf96323c43
+      - MJ_APIKEY_PRIVATE=fadc395b52966871a88f8f306c5a946b
     ports:
       - "8000:8000"
     volumes:
@@ -32,11 +37,16 @@ services:
     build:
       context: .
       dockerfile: dockerfile
-    command: "celery -A topics worker -l info"
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             celery -A topics worker -l info"
     volumes:
       - ./stagelite:/stagelite
     env_file:
       - ./.env.dev
+    ports:
+      - "465:465"
     depends_on:
       - db
       - redis
@@ -62,14 +72,18 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: frontend.dockerfile
+      dockerfile: stagelite/frontend/Dockerfile
     ports:
       - "3000:3000"
   celerybeat:
     restart: always
     build:
       context: .
-    command: celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+      dockerfile: dockerfile
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     volumes:
       - ./app:/app
     env_file:

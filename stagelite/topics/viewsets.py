@@ -1,3 +1,6 @@
+
+from datetime import date, timedelta
+
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -69,5 +72,21 @@ class CompetitionViewSet(viewsets.ModelViewSet):
             return_info['competition_info'][competition.theme]['downvotes'] = competition.votes.downvote
             return_info['competition_info'][competition.theme]['id'] = competition.id
             return_info['competition_info'][competition.theme]['num_topics'] = competition.competition_topics.count()
+
+        return(HttpResponse(json.dumps(return_info)))
+
+class TopicsViewSet(viewsets.ModelViewSet):
+    queryset = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1)))
+    serializer_class = TopicSerializer
+
+    def list(self, request):
+        return_info = {}
+        return_info['topic_info'] = {}
+        competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
+        for topic in competition_objects.iterator():
+            return_info['topic_info'][topic.title] = {}
+            return_info['topic_info'][topic.title]['upvotes'] = topic.votes.upvote
+            return_info['topic_info'][topic.title]['downvotes'] = topic.votes.downvote
+            return_info['topic_info'][topic.title]['id'] = topic.id
 
         return(HttpResponse(json.dumps(return_info)))

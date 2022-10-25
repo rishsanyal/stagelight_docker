@@ -22,12 +22,24 @@ app.conf.update(
 )
 
 app.conf.beat_schedule = {
-    'tasks.add': {
+    'add-every-31-seconds': {
         'task': 'topics.tasks.add',
-        'schedule': 30.0, # Every 30 minutes
-        'args': (16, 16)
+        'schedule': 30.0, # 30 seconds
+        'args': (11, 16)
+    },
+    'notify_user_of_new_topic': {
+        'task': 'topics.tasks.notify_user_of_new_topic',
+        'schedule': 60*60*24, # Once a day
+        'args': ()
+    },
+    'import_reddit_topics': {
+        'task': 'topics.tasks.import_reddit_topics',
+        'schedule': 60*60*24, # Once a day
+        'args': ()
     },
 }
+
+app.conf.timezone = 'UTC'
 
 if __name__ == '__main__':
     app.start()

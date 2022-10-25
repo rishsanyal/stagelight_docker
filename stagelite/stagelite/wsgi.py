@@ -17,9 +17,11 @@ application = get_wsgi_application()
 
 
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from stage.models import StageUser
 
-u, _ = User.objects.get_or_create(username='froot')
+u, _ = StageUser.objects.get_or_create(username='test_user')
+u.user_email = "rsanyal@ucdavis.edu"
 u.set_password('password')
 u.is_superuser = True
 u.is_staff = True
