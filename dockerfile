@@ -9,6 +9,7 @@ RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
 
 RUN mkdir /stagelite
-COPY ./stagelite /stagelite
+RUN ls
+ADD ./stagelite /stagelite
 RUN pip install -r /stagelite/requirements.txt
 WORKDIR /stagelite

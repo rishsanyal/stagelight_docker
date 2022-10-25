@@ -77,7 +77,7 @@ class Competitions(BaseTopicModel):
     winner_topic = models.OneToOneField(Topic, on_delete=models.CASCADE, null=True)
     winner_user = models.OneToOneField(StageUser, on_delete=models.DO_NOTHING, null=True)
     start_time = models.DateField(auto_now_add=True)
-    end_time = models.DateField(default=datetime.datetime.now() + datetime.timedelta(weeks=DEFAULT_COMPETITION_END_TIME))
+    end_time = models.DateField(auto_now_add=True)
     theme = models.CharField(max_length=128, blank=True)
     competition_topics = models.ManyToManyField(Topic, related_name='competition_topics', null=True)
     is_open = models.BooleanField(default=False)

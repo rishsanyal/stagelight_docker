@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+from celery import Celery
+from celery.schedules import crontab
+
+app = Celery()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,8 +47,7 @@ INSTALLED_APPS = [
     'stage',
     'topics',
     'django_extensions',
-    'celery_admin',
-    # 'django_celery_beat',
+    'django_celery_beat',
 
 ]
 
@@ -164,3 +169,12 @@ CELERY_RESULT_BACKEND = "redis://redis:6379"
 DJANGO_SUPERUSER_USERNAME="testuser"
 DJANGO_SUPERUSER_PASSWORD="testpass"
 DJANGO_SUPERUSER_EMAIL="admin@admin.com"
+
+app.conf.beat_schedule = {
+    'add-every-30-seconds': {
+        'task': 'topics.tasks.add',
+        'schedule': 30.0,
+        'args': (16, 16)
+    },
+}
+app.conf.timezone = 'UTC'

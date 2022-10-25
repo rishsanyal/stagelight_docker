@@ -62,19 +62,22 @@ services:
   frontend:
     build:
       context: .
-    command: "cd stagelite/frontend && yarn start"
-    # celerybeat:
-    #   restart: always
-    #   build:
-    #     context: .
-    #   command: celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    #   volumes:
-    #     - ./app:/app
-    #   env_file:
-    #     - ./.env.dev
-    #   depends_on:
-    #     - db
-    #     - redis
-    #     - app
+      dockerfile: frontend.dockerfile
+    ports:
+      - "3000:3000"
+  celerybeat:
+    restart: always
+    build:
+      context: .
+    command: celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+      - app
+      - celery
 volumes:
   pgdata:
