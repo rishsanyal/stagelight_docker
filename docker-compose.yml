@@ -9,8 +9,8 @@ services:
     volumes:
       - ./stagelite:/stagelite
     command: >
-      sh -c "python3 manage.py migrate &&
-             python3 manage.py wait_for_db &&
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
              python3 manage.py runserver --settings=stagelite.settings 0.0.0.0:8000"
     env_file:
       - ./.env.dev
@@ -31,14 +31,45 @@ services:
     restart: always
     build:
       context: .
-    command: celery -A topics worker -l info
+    command: "cd stagelite && celery -A topics worker -l info"
     volumes:
-      - ./app:/app
+      - ./stagelite:/stagelite
     env_file:
       - ./.env.dev
     depends_on:
       - db
       - redis
       - app
+  celery_flower:
+    restart: always
+    build:
+      context: .
+    command: "cd stagelite && celery -A topics flower"
+    volumes:
+      - ./stagelite:/stagelite
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+      - app
+      - celery
+  frontend:
+    build:
+      context: .
+    command: "cd stagelite/frontend && yarn start"
+    # celerybeat:
+    #   restart: always
+    #   build:
+    #     context: .
+    #   command: celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    #   volumes:
+    #     - ./app:/app
+    #   env_file:
+    #     - ./.env.dev
+    #   depends_on:
+    #     - db
+    #     - redis
+    #     - app
 volumes:
   pgdata:
