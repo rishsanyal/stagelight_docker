@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
     'django_celery_beat',
     # 'celery_admin',
     'stage',
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'stagelite.urls'
@@ -188,3 +191,7 @@ DJANGO_SUPERUSER_EMAIL="admin@admin.com"
 #     },
 # # }
 # app.conf.timezone = 'UTC'
+
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000'
+]

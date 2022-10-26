@@ -12,6 +12,7 @@ from topics.models import Votes, Topic, Competitions, UserSubmission
 from topics.serializers import VotesSerializer, CompetitionSerializer, UserSubmissionSerializer, TopicSerializer
 
 import json
+from django.http import JsonResponse
 
 class BaseViewSet(viewsets.ModelViewSet):
     # queryset = BaseTopicModel.objects.all()
@@ -81,12 +82,14 @@ class TopicsViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         return_info = {}
-        return_info['topic_info'] = {}
+        return_info = []
         competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
         for topic in competition_objects.iterator():
-            return_info['topic_info'][topic.title] = {}
-            return_info['topic_info'][topic.title]['upvotes'] = topic.votes.upvote
-            return_info['topic_info'][topic.title]['downvotes'] = topic.votes.downvote
-            return_info['topic_info'][topic.title]['id'] = topic.id
+            temp_return_info = {}
+            temp_return_info['title'] = topic.title
+            temp_return_info['upvotes'] = topic.votes.upvote
+            temp_return_info['downvotes'] = topic.votes.downvote
+            temp_return_info['id'] = topic.id
+            return_info.append(temp_return_info)
 
-        return(HttpResponse(json.dumps(return_info)))
+        return(JsonResponse(return_info, safe=False))
