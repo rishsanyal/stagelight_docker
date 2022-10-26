@@ -1,15 +1,14 @@
 amqp==2.5.2
 appnope==0.1.0
-asgiref==3.2.5
+asgiref
 Babel==2.8.0
 backcall==0.1.0
-backports.zoneinfo==0.2.1
+# backports.zoneinfo==0.2.1
 billiard==3.6.3.0
 celery==4.4
 certifi==2019.11.28
 chardet==3.0.4
 decorator==4.4.2
-Django==3.0.4
 django-extensions==2.2.9
 djangorestframework==3.11.0
 django-celery-admin==0.1
@@ -46,3 +45,4 @@ django-celery-beat
 django-celery-monitor
 mailjet_rest==1.3.4
 django-celery
+django-cors-headers==3.13.0
