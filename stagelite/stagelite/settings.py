@@ -53,6 +53,12 @@ INSTALLED_APPS = [
     'django_extensions',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -193,5 +199,6 @@ DJANGO_SUPERUSER_EMAIL="admin@admin.com"
 # app.conf.timezone = 'UTC'
 
 CORS_ORIGIN_WHITELIST = [
-     'http://localhost:3000'
+     'http://localhost:3000',
+     'http://0.0.0.0:3000'
 ]

@@ -15,7 +15,9 @@ class Topics extends Component {
     console.log("HERE");
     this.state = {
       topics: [],
-      topicsSet: false
+      chosenTopic: null,
+      currentTopic: null,
+
     }
   }
 
@@ -25,8 +27,10 @@ class Topics extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.topics !== this.props.topics) {
+      console.log(this.props.topics);
       this.setState({
-        topics: this.props.topics
+        topics: this.props.topics,
+        currentTopic: this.props.topics[0],
       })
     }
   }
@@ -35,12 +39,7 @@ class Topics extends Component {
     return (
       <center>
         <h1>Topics</h1>
-        {this.state.topics.map((topic) => (
-            <div>
-              <h3>{topic.topic}</h3>
-              <p>{topic.description}</p>
-            </div>
-          ))}
+        {console.log(this.state.topics)}
       </center>
     )
   }
@@ -48,6 +47,7 @@ class Topics extends Component {
 
 const mapStateToProps = (state) => {
   return {
+      topics: state
       //Non-action functions can go here
   };
 };

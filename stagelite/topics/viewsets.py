@@ -7,6 +7,7 @@ from django.http import HttpResponse
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from topics.models import Votes, Topic, Competitions, UserSubmission
 from topics.serializers import VotesSerializer, CompetitionSerializer, UserSubmissionSerializer, TopicSerializer
@@ -77,6 +78,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         return(HttpResponse(json.dumps(return_info)))
 
 class TopicsViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1)))
     serializer_class = TopicSerializer
 

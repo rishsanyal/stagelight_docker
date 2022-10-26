@@ -3,5 +3,6 @@ RUN mkdir /stagelite
 ADD ./stagelite /stagelite
 WORKDIR /stagelite/frontend
 EXPOSE 3000
-CMD npm install
-CMD yarn start
+RUN npm install
+RUN yarn install
+RUN yarn start

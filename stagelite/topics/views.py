@@ -1,7 +1,8 @@
+from datetime import date, timedelta
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
-from topics.models import Competitions
+from topics.models import Competitions, Topic
 
 import json
 
@@ -35,3 +36,17 @@ def get_competition_overview(request):
         return_info[competition.theme]['num_topics'] = competition.competition_topics.count()
 
     return(HttpResponse(json.dumps(return_info)))
+
+def get_competition_topics(request):
+    if request.method == 'GET':
+        return_info = []
+        competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
+        for topic in competition_objects.iterator():
+            temp_return_info = {}
+            temp_return_info['title'] = topic.title
+            temp_return_info['upvotes'] = topic.votes.upvote
+            temp_return_info['downvotes'] = topic.votes.downvote
+            temp_return_info['id'] = topic.id
+            return_info.append(temp_return_info)
+
+        return(JsonResponse(return_info, safe=False))

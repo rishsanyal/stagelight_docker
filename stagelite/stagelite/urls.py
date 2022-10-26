@@ -16,16 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-# from topics.views import get_competition_overview
-# from topics.viewsets import CompetitionViewSet
-# import topics
-# from topics import viewsets
+from topics.views import get_competition_topics
+# from topics.viewsets import TopicsViewSet
+
 
 urlpatterns = [
-    path('', admin.site.urls),
+    path('trial_topics/', get_competition_topics),
     path('admin/', admin.site.urls),
-    path('topics/', include('topics.urls'), name='topics'),
-    # Add Topics URLs later
-    # path('api/competitions', CompetitionViewSet),
-    # path('api/get_competition_info', get_competition_overview, name='competition_info')
+    path('topics/', include('topics.urls')),
+    path('', admin.site.urls),
 ]
