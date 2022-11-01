@@ -73,6 +73,7 @@ services:
   frontend:
     build:
       context: .
+    command: ls
     ports:
       - "3000:3000"
   celerybeat:
