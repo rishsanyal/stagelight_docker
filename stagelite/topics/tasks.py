@@ -4,13 +4,14 @@ from datetime import date, timedelta
 from topics.models import Topic
 
 from .celery import app
+from .celery.task import task, shared_task
 from topics.lib.import_topics import RedditTopicsParser
 from topics.lib.user_interactions import UserInteractions
 
 from stage.models import StageUser
 
 
-@app.task
+@shared_task(name='add_new')
 def add(x, y):
     return x + y
 
@@ -25,13 +26,13 @@ def xsum(numbers):
     return sum(numbers)
 
 
-@app.task
+@shared_task(name='import_reddit_topics')
 def import_reddit_topics():
     parser = RedditTopicsParser()
     parser.parse_and_populate_topics()
 
 # Adding STAGE tasks here too for now
-@app.task
+@shared_task(name='notify_user_of_new_topic')
 def notify_user_of_new_topic():
     user_interaction = UserInteractions()
     today_topics = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('creation_time')[:3]
