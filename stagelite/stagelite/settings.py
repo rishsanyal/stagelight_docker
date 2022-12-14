@@ -13,10 +13,13 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+# from celery import app as celery_app
+
 from celery import Celery
 from celery.schedules import crontab
 
 app = Celery()
+CELERY_IMPORTS = ('topics.tasks',)
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -180,22 +183,22 @@ DJANGO_SUPERUSER_PASSWORD="testpass"
 DJANGO_SUPERUSER_EMAIL="admin@admin.com"
 
 # app.conf.beat_schedule = {
-#     'add-every-30-seconds': {
+#     'add-every-32-seconds': {
 #         'task': 'topics.tasks.add',
 #         'schedule': 30.0, # 30 seconds
 #         'args': (16, 16)
 #     },
 #     'notify_user_of_new_topic': {
-#         'task': 'topics.tasks.notify_user_of_new_topic',
+#         'task': 'notify_user_of_new_topic',
 #         'schedule': 60*60*24, # Once a day
 #         'args': ()
 #     },
 #     'import_reddit_topics': {
-#         'task': 'topics.tasks.import_reddit_topics',
+#         'task': 'import_reddit_topics',
 #         'schedule': 60*60*24, # Once a day
 #         'args': ()
 #     },
-# # }
+# }
 # app.conf.timezone = 'UTC'
 
 CORS_ORIGIN_WHITELIST = [

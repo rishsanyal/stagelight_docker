@@ -1,4 +1,6 @@
 from __future__ import absolute_import, unicode_literals
+from django.conf import settings
+
 # import settings
 # from django.conf import CELERY_RESULT_BACKEND, CELERY_BROKER_URL
 from stagelite.settings import CELERY_RESULT_BACKEND, CELERY_BROKER_URL
@@ -12,7 +14,6 @@ from celery import Celery
 app = Celery('topics',
              backend=CELERY_RESULT_BACKEND,
              broker=CELERY_BROKER_URL,
-             include=['topics.tasks'],
              timezone='PDT'
             )
 
@@ -20,6 +21,7 @@ app = Celery('topics',
 app.conf.update(
     result_expires=3600,
 )
+
 
 app.conf.beat_schedule = {
     'add-every-31-seconds': {
@@ -41,6 +43,8 @@ app.conf.beat_schedule = {
 
 app.conf.timezone = 'UTC'
 app.autodiscover_tasks()
+
+app.config_from_object(settings, namespace='CELERY')
 
 if __name__ == '__main__':
     app.start()

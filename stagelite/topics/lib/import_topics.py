@@ -12,7 +12,7 @@ class RedditTopicsParser:
         self,
         topic_limit=5,
         subreddit='WritingPrompts',
-        sort_by_time='all',
+        sort_by_time='24h',
         reddit_instance=None):
 
         if reddit_instance is None:
