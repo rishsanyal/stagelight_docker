@@ -30,6 +30,8 @@ services:
       - pgdata:/var/lib/postgresql/data
   redis:
     image: redis:alpine
+    ports:
+      - "6379:6379"
   rabbitmq:
     image: rabbitmq:3.7-alpine
   celery:
@@ -48,10 +50,10 @@ services:
     ports:
       - "465:465"
     depends_on:
+      - app
       - db
       - redis
       - rabbitmq
-      - app
   celery_flower:
     restart: always
     build:
@@ -73,9 +75,11 @@ services:
   frontend:
     build:
       context: .
-    command: ls
+      dockerfile: stagelite/frontend/Dockerfile
+    command: yarn start
     ports:
       - "3000:3000"
+    network_mode: "host"
   celerybeat:
     restart: always
     build:
@@ -86,7 +90,7 @@ services:
              python3 manage.py migrate &&
              celery -A topics beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
     volumes:
-      - ./app:/app
+      - ./stagelite:/stagelite
     env_file:
       - ./.env.dev
     depends_on:
