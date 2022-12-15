@@ -4,10 +4,12 @@ from datetime import date, timedelta
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from rest_framework.views import APIView
 
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from stagelite.stage.models import StageUser
 
 from topics.models import Votes, Topic, Competitions, UserSubmission
 from topics.serializers import VotesSerializer, CompetitionSerializer, UserSubmissionSerializer, TopicSerializer
@@ -48,9 +50,38 @@ class TopicsViewSet(viewsets.ModelViewSet):
     serializer_class = TopicSerializer
 
 
-class UserSubmissionViewSet(viewsets.ModelViewSet):
+class UserSubmissionViewSet(APIView):
     queryset = UserSubmission.objects.all()
     serializer_class = UserSubmissionSerializer
+
+    def post(self, request):
+        return_info = {}
+
+        jsonBody = json.loads(request.body)
+        textEntry = jsonBody['textEntry']
+        topicId = int(jsonBody['id'])
+        username = int(jsonBody['username'])
+
+        userEntry = UserSubmission(
+            user=StageUser.objects.get(username=username),
+            topic=Topic.objects.get(id=topicId),
+            votes=Votes.objects.create(),
+            submission_entry=textEntry
+        )
+        userEntry.save()
+
+        return_info['success'] = True
+        # else:
+        #     return_info['success'] = False
+        #     return_info['error'] = 'User already submitted an entry for this topic'
+
+        return(JsonResponse(return_info, safe=False))
+
+    def get(self, request):
+        return_info = {}
+        return_info['success'] = "true"
+
+        return JsonResponse(return_info, safe=False)
 
 
 
@@ -93,5 +124,22 @@ class TopicsViewSet(viewsets.ModelViewSet):
             temp_return_info['downvotes'] = topic.votes.downvote
             temp_return_info['id'] = topic.id
             return_info.append(temp_return_info)
+
+        return(JsonResponse(return_info, safe=False))
+
+    def retrieve(self, request, pk=None):
+        return_info = {}
+        topic = get_object_or_404(Topic, pk=pk)
+        return_info['title'] = topic.title
+        return_info['upvotes'] = topic.votes.upvote
+        return_info['downvotes'] = topic.votes.downvote
+        return_info['id'] = topic.id
+
+        return(JsonResponse(return_info, safe=False))
+
+    def create(self, request):
+        return_info = {}
+        return_info['success'] = False
+        return_info['error'] = 'Not Implemented'
 
         return(JsonResponse(return_info, safe=False))

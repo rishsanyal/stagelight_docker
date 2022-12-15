@@ -6,7 +6,13 @@ from topics.models import Competitions, Topic
 
 import json
 
+def baseRequest(request):
+    if not(request.user.is_authenticated):
+        response = HttpResponse('blah')
+        response.set_cookie('username', request.user.username)
+
 def competition_info(request):
+    baseRequest(request)
     if request.method == 'GET':
         return_info = {}
 
@@ -22,6 +28,7 @@ def competition_info(request):
         return(HttpResponse(json.dumps(return_info)))
 
 def get_competition_overview(request):
+    baseRequest(request)
 
     return_info = {}
     #TODO: Pagination here so we don't have to hardcode 10 here
@@ -38,15 +45,30 @@ def get_competition_overview(request):
     return(HttpResponse(json.dumps(return_info)))
 
 def get_competition_topics(request):
+    baseRequest(request)
+
     if request.method == 'GET':
-        return_info = []
-        competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
+        return_info = {}
+        return_info['topics'] = []
+        return_info['userSubmittedAny'] = False
+
+        topics_info = []
+        competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')[:3]
         for topic in competition_objects.iterator():
             temp_return_info = {}
             temp_return_info['title'] = topic.title
             temp_return_info['upvotes'] = topic.votes.upvote
             temp_return_info['downvotes'] = topic.votes.downvote
             temp_return_info['id'] = topic.id
-            return_info.append(temp_return_info)
+
+            username = request.user.username
+            temp_return_info['userSubmissionStatus'] = username in topic.usersubmission_set.values_list('user__username', flat=True)
+
+            topics_info.append(temp_return_info)
+
+            if temp_return_info['userSubmissionStatus']:
+                return_info['userSubmittedAny'] = True
+
+        return_info['topics'] = topics_info
 
         return(JsonResponse(return_info, safe=False))

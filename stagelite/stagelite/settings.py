@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-x=@jj_+jc+crmyb4okgxpb&8zq#z8vkxd63jmh0z#3h19xn+#j
 DEBUG = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "*"]
-
+LOGIN_REDIRECT_URL = "0.0.0.0:3000/topics"
 
 # Application definition
 
@@ -47,8 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'rest_framework',
+    'corsheaders',
     'django_celery_beat',
     # 'celery_admin',
     'stage',
@@ -72,7 +72,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'stagelite.urls'
 
 TEMPLATES = [

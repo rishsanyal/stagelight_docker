@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.utils import timezone
 
 from stage.models import StageUser
 
@@ -11,14 +12,21 @@ def get_new_vote():
 
 class BaseTopicModel(models.Model):
 
-    last_updated = models.DateField(auto_now=True)
-    creation_time = models.DateField(auto_now_add=True)
+    last_updated = models.DateTimeField(default=timezone.now)
+    creation_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return str(self.id)
 
     class Meta:
         abstract = True
+
+
+    def save(self, *args, **kwargs):
+        """Modify the save method to update the last_updated field.
+        """
+        self.last_updated = timezone.now()
+        super(BaseTopicModel, self).save(*args, **kwargs)
 
 class Votes(BaseTopicModel):
     upvote = models.PositiveIntegerField(default=0)
@@ -58,11 +66,12 @@ class UserSubmission(BaseTopicModel):
     # awards = FUTURE REQUEST
     # COMMENTS = FUTURE REQUEST
 
+    unique_together = ('topic', 'user')
 
     def save(self, *args, **kwargs):
         # Hack to create votes, not sure on how to create a new object of votes
-        if not self.votes:
-            self.votes = Votes.objects.create()
+        # if not self.votes:
+        #     self.votes = Votes.objects.create()
         super(UserSubmission, self).save(*args, **kwargs)
 
 class Competitions(BaseTopicModel):

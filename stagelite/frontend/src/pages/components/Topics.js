@@ -1,60 +1,44 @@
 import React, { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { getTopicsList, getList } from '../../redux/actions/TopicsActions';
+import TopicDisplay from './TopicDisplay';
 
-import { getTopicsList } from '../../redux/actions/TopicsActions';
+function Topics(props) {
 
-class Topics extends Component {
-  static propTypes = {
-    prop: PropTypes
-  }
+  const [topics, setTopics] = useState([]);
 
-  constructor(props) {
-    super(props);
-    console.log("HERE");
-    this.state = {
-      topics: [],
-      chosenTopic: null,
-      currentTopic: null,
+  useEffect(() => {
+    let mounted = true;
+    getTopicsList().then(items => {
+      if(mounted) {
+        setTopics(items['topics'])
+        }
+    })
 
-    }
-  }
+    return () => mounted = false;
+  }, []);
 
-  componentWillMount() {
-    this.props.getTopicsList();
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.topics !== this.props.topics) {
-      console.log(this.props.topics);
-      this.setState({
-        topics: this.props.topics,
-        currentTopic: this.props.topics[0],
-      })
-    }
-  }
 
-  render() {
-    return (
-      <center>
-        <h1>Topics</h1>
-        {console.log(this.state.topics)}
-      </center>
-    )
-  }
+  return (
+    <div>
+    <h1>
+    </h1>
+
+      {topics.map((topic) => (
+        <div>
+          {/* {topic.title} */}
+          <TopicDisplay title={topic.title} upvotes={topic.upvotes} downvotes={topic.downvotes} id={topic.id}/>
+        </div>
+      ))}
+
+    </div>
+  )
 }
 
-const mapStateToProps = (state) => {
-  return {
-      topics: state
-      //Non-action functions can go here
-  };
-};
+Topics.propTypes = {}
 
-export default connect(
-  mapStateToProps,
-  {
-      getTopicsList
-  })
-(Topics);
+export default Topics;
