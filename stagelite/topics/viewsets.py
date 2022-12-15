@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from stagelite.stage.models import StageUser
+from stage.models import StageUser
 
 from topics.models import Votes, Topic, Competitions, UserSubmission
 from topics.serializers import VotesSerializer, CompetitionSerializer, UserSubmissionSerializer, TopicSerializer
@@ -90,6 +90,9 @@ class CompetitionViewSet(viewsets.ModelViewSet):
     serializer_class = CompetitionSerializer
 
     def list(self, request):
+        if request.user.is_authenticated:
+            response = HttpResponse('blah')
+            response.set_cookie('username', request.user.username)
         pages = request.GET.get('page', 10)
         return_info = {}
         #TODO: Pagination here so we don't have to hardcode 10 here
@@ -114,6 +117,9 @@ class TopicsViewSet(viewsets.ModelViewSet):
     serializer_class = TopicSerializer
 
     def list(self, request):
+        if request.user.is_authenticated:
+            response = HttpResponse('blah')
+            response.set_cookie('username', request.user.username)
         return_info = {}
         return_info = []
         competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
@@ -128,6 +134,9 @@ class TopicsViewSet(viewsets.ModelViewSet):
         return(JsonResponse(return_info, safe=False))
 
     def retrieve(self, request, pk=None):
+        if request.user.is_authenticated:
+            response = HttpResponse('blah')
+            response.set_cookie('username', request.user.username)
         return_info = {}
         topic = get_object_or_404(Topic, pk=pk)
         return_info['title'] = topic.title

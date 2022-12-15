@@ -1,15 +1,22 @@
 from datetime import date, timedelta
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 
 from topics.models import Competitions, Topic
 
 import json
 
+
+
 def baseRequest(request):
-    if not(request.user.is_authenticated):
-        response = HttpResponse('blah')
+    if request.user.is_authenticated:
+        response = HttpResponseRedirect("http://0.0.0.0:3000/topics/")
         response.set_cookie('username', request.user.username)
+        return response
+
+def hello(request):
+    response = baseRequest(request)
+    return response
 
 def competition_info(request):
     baseRequest(request)

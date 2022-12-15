@@ -36,12 +36,11 @@ SECRET_KEY = 'django-insecure-x=@jj_+jc+crmyb4okgxpb&8zq#z8vkxd63jmh0z#3h19xn+#j
 DEBUG = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "*"]
-LOGIN_REDIRECT_URL = "0.0.0.0:3000/topics"
+LOGIN_REDIRECT_URL = "http://0.0.0.0:8000/topics/hello/"
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     'stage',
     'topics',
     'django_extensions',
+    'django.contrib.admin',
 ]
 
 REST_FRAMEWORK = {
@@ -78,7 +78,7 @@ ROOT_URLCONF = 'stagelite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

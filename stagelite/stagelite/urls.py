@@ -15,14 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import TemplateView # new
 
 from topics.views import get_competition_topics
+
+
 # from topics.viewsets import TopicsViewSet
 
 
 urlpatterns = [
+    # path('/', hello),
+    path("accounts/", include("django.contrib.auth.urls")),  # new
     path('trial_topics/', get_competition_topics),
     path('admin/', admin.site.urls),
     path('topics/', include('topics.urls')),
-    path('', admin.site.urls),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'), # new
+    # path('', admin.site.urls),
 ]
