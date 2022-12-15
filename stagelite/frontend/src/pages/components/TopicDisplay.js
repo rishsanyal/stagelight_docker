@@ -56,7 +56,7 @@ export function TopicDisplay({title, upvotes, downvotes, id, userentry, update, 
           <Typography>Topic #{id}</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          {userentry === false ?
+          {/* {userentry === false ?
           <a href={`/topicSubmission?topicId=${id}`}>
           <Typography>
             {title}
@@ -65,8 +65,12 @@ export function TopicDisplay({title, upvotes, downvotes, id, userentry, update, 
           <Typography>
             {title}
           </Typography>
-      }
-
+      } */}
+        <a href={`/topicSubmission?topicId=${id}`}>
+          <Typography>
+            {title}
+          </Typography>
+        </a>
         </AccordionDetails>
         </Accordion>
         {/* {title}

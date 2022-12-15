@@ -15,6 +15,6 @@ router.register(r'topics_list', TopicsViewSet, 'topics')
 urlpatterns = [
     path('voteTopic/', vote),
     path('hello/', hello),
-    path('user_submission/', UserSubmissionViewSet.as_view()),
+    path('submission/', UserSubmissionViewSet.as_view()),
     path('', include(router.urls)),
 ]

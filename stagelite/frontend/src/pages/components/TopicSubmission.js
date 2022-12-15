@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSearchParams } from "react-router-dom";
 
-import { getSpecificTopicsList } from '../../redux/actions/TopicsActions';
+import { getSpecificTopicsList, getUserSubmission } from '../../redux/actions/TopicsActions';
 
 // import Accordion from '@mui/material/Accordion';
 // import AccordionSummary from '@mui/material/AccordionSummary';
@@ -51,7 +51,7 @@ function TopicSubmission() {
         getUserSubmission(username, topicId).then(items => {
             if(mounted) {
                 if (items) {
-                    setEditorState(EditorState.createWithContent(ContentState.createFromText(items.textEntry)));
+                    setEditorState(EditorState.createWithContent(ContentState.createFromText(items)));
                     setUserSubmitted(true);
                 }
             }
@@ -72,7 +72,7 @@ function TopicSubmission() {
     const submit = (topicID) => {
         var plainText = editorState.getCurrentContent().getPlainText();
 
-        fetch('http://localhost:8000/topics/user_submission/', {
+        fetch('http://localhost:8000/topics/submission/', {
             method: 'POST',
             body: JSON.stringify({
                 id: topicID,

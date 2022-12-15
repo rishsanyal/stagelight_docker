@@ -67,7 +67,7 @@ class UserSubmission(BaseTopicModel):
     # awards = FUTURE REQUEST
     # COMMENTS = FUTURE REQUEST
 
-    unique_together = ('topic', 'user')
+    unique_together = ('topic', 'user', 'submission_entry')
 
     def save(self, *args, **kwargs):
         # Hack to create votes, not sure on how to create a new object of votes

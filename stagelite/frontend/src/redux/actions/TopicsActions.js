@@ -60,8 +60,10 @@ export function voteTopic(topicId, voteType){
 
 export function getUserSubmission(username, topicId){
         return fetch(
-            "http://127.0.0.1:8000/topics/user_submission/?username="+username+"&topicId="+topicId,
+            "http://127.0.0.1:8000/topics/submission/?username="+username+"&topicId="+topicId,
         ).then(response => response.json()).then(data => {
             console.log(data);
-            return data
+            return data['userEntry']
         }
+    )
+}

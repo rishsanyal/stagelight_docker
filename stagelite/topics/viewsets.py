@@ -66,13 +66,20 @@ class UserSubmissionViewSet(APIView):
         topicId = int(jsonBody['id'])
         username = jsonBody['username']
 
-        userEntry = UserSubmission(
+        votes = Votes()
+        votes.save()
+        userEntry, creation_status = UserSubmission.objects.get_or_create(
             user=StageUser.objects.get(username=username),
             topic=Topic.objects.get(id=topicId),
-            votes=Votes.objects.create(),
-            submission_entry=textEntry
+            defaults={
+                'votes': votes,
+                'submission_entry': ''
+            }
         )
-        userEntry.save()
+        if not creation_status:
+            userEntry.submission_entry = textEntry
+            userEntry.save()
+
 
         return_info['success'] = True
         # else:
@@ -82,28 +89,23 @@ class UserSubmissionViewSet(APIView):
         return(JsonResponse(return_info, safe=False))
 
     def get(self, request):
-        return_info = {}
-        jsonBody = json.loads(request.body)
-        topicId = int(jsonBody['id'])
-        username = jsonBody['username']
+        try:
+            topicId = int(request.GET.get('topicId'))
+            username = request.GET.get('username')
 
-        userEntry = UserSubmission.objects.filter(user=StageUser.objects.get(username=username), topic=Topic.objects.get(id=topicId))
-
-        return_info['userEntry'] = userEntry.submission_entry
-
-        return JsonResponse(return_info, safe=False)
-
-    def get(self, request):
-
-        jsonBody = json.loads(request.body)
-        topicId = int(jsonBody['id'])
-        username = jsonBody['username']
-
-        userEntry = UserSubmission.objects.filter(user=StageUser.objects.get(username=username), topic=Topic.objects.get(id=topicId))
-
-        return_info = {}
-        return_info['userEntry'] = userEntry.submission_entry
-
+            return_info = {}
+            userEntry = UserSubmission.objects.get(user=StageUser.objects.get(username=username), topic=Topic.objects.get(id=topicId))
+            if userEntry:
+                return_info['userEntry'] = userEntry.submission_entry
+                return_info['success'] = True
+            else:
+                return_info['success'] = False
+                return_info['userEntry'] = ''
+                return_info['error'] = 'User has not submitted an entry for this topic'
+        except UserSubmission.DoesNotExist:
+            return_info['success'] = False
+            return_info['userEntry'] = ''
+            return_info['error'] = 'User has not submitted an entry for this topic'
         return JsonResponse(return_info, safe=False)
 
 
