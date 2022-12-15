@@ -2,6 +2,8 @@ import {FETCH_TOPICS} from '../ActionTypes'
 
 import axios, * as others from 'axios';
 
+import Cookies from 'js-cookie';
+
 export function getTopicsList(){
 
     // let myValue;
@@ -25,8 +27,10 @@ export function getTopicsList(){
     //     return response.data;
     // });
 
+    const username = Cookies.get('username');
+
     return fetch(
-        'http://0.0.0.0:8000/trial_topics/'
+        'http://127.0.0.1:8000/topics/topics_list?username='+username
     ).then(response => response.json()).then(data => {
         console.log(data['topics']);
         return data
@@ -38,9 +42,26 @@ export function getTopicsList(){
 export function getSpecificTopicsList(topicId){
 
     return fetch(
-        'http://localhost:8000/topics/topics_list/' + topicId + "/"
+        'http://127.0.0.1:8000/topics/topics_list/' + topicId + "/"
     ).then(response => response.json()).then(data => {
         console.log(data['topics']);
         return data
     })
 }
+
+export function voteTopic(topicId, voteType){
+
+    const username = Cookies.get('username');
+
+    return fetch(
+        "http://127.0.0.1:8000/topics/voteTopic/?type="+voteType+"&id="+topicId+"&username="+username,
+    )
+}
+
+export function getUserSubmission(username, topicId){
+        return fetch(
+            "http://127.0.0.1:8000/topics/user_submission/?username="+username+"&topicId="+topicId,
+        ).then(response => response.json()).then(data => {
+            console.log(data);
+            return data
+        }

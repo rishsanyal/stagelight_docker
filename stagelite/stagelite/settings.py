@@ -21,6 +21,14 @@ from celery.schedules import crontab
 app = Celery()
 CELERY_IMPORTS = ('topics.tasks',)
 
+CORS_ORIGIN_WHITELIST = [
+     'http://localhost:3000',
+     'http://0.0.0.0:3000'
+     'http://localhost:8000',
+     'http://0.0.0.0:8000'
+]
+
+# APPEND_SLASH=False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,19 +43,19 @@ SECRET_KEY = 'django-insecure-x=@jj_+jc+crmyb4okgxpb&8zq#z8vkxd63jmh0z#3h19xn+#j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "*"]
-LOGIN_REDIRECT_URL = "http://0.0.0.0:8000/topics/hello/"
+ALLOWED_HOSTS = ["*"]
+LOGIN_REDIRECT_URL = "http://127.0.0.1:8000/topics/hello/"
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'corsheaders',
     'django_celery_beat',
     # 'celery_admin',
     'stage',
@@ -65,15 +73,40 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'stagelite.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "https://domain.com",
+    "https://api.domain.com",
+    "http://localhost:8080",
+    "http://localhost:3000",
+    "http://127.0.0.1:8000",
+    "http://127.0.0.1:3000",
+    "http://0.0.0.0:8000",
+    "http://0.0.0.0:3000",
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 
 TEMPLATES = [
     {
@@ -200,8 +233,3 @@ DJANGO_SUPERUSER_EMAIL="admin@admin.com"
 #     },
 # }
 # app.conf.timezone = 'UTC'
-
-CORS_ORIGIN_WHITELIST = [
-     'http://localhost:3000',
-     'http://0.0.0.0:3000'
-]

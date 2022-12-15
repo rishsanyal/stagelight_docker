@@ -51,16 +51,20 @@ class TopicsViewSet(viewsets.ModelViewSet):
 
 
 class UserSubmissionViewSet(APIView):
+    permission_classes = [AllowAny]
     queryset = UserSubmission.objects.all()
     serializer_class = UserSubmissionSerializer
 
     def post(self, request):
+        if request.user.is_authenticated:
+            response = HttpResponse('blah')
+            response.set_cookie('username', request.user.username)
         return_info = {}
 
         jsonBody = json.loads(request.body)
         textEntry = jsonBody['textEntry']
         topicId = int(jsonBody['id'])
-        username = int(jsonBody['username'])
+        username = jsonBody['username']
 
         userEntry = UserSubmission(
             user=StageUser.objects.get(username=username),
@@ -79,7 +83,26 @@ class UserSubmissionViewSet(APIView):
 
     def get(self, request):
         return_info = {}
-        return_info['success'] = "true"
+        jsonBody = json.loads(request.body)
+        topicId = int(jsonBody['id'])
+        username = jsonBody['username']
+
+        userEntry = UserSubmission.objects.filter(user=StageUser.objects.get(username=username), topic=Topic.objects.get(id=topicId))
+
+        return_info['userEntry'] = userEntry.submission_entry
+
+        return JsonResponse(return_info, safe=False)
+
+    def get(self, request):
+
+        jsonBody = json.loads(request.body)
+        topicId = int(jsonBody['id'])
+        username = jsonBody['username']
+
+        userEntry = UserSubmission.objects.filter(user=StageUser.objects.get(username=username), topic=Topic.objects.get(id=topicId))
+
+        return_info = {}
+        return_info['userEntry'] = userEntry.submission_entry
 
         return JsonResponse(return_info, safe=False)
 
@@ -117,11 +140,15 @@ class TopicsViewSet(viewsets.ModelViewSet):
     serializer_class = TopicSerializer
 
     def list(self, request):
-        if request.user.is_authenticated:
-            response = HttpResponse('blah')
-            response.set_cookie('username', request.user.username)
+        # if request.user.is_authenticated:
+        #     response = HttpResponse('blah')
+        #     response.set_cookie('username', request.user.username)
         return_info = {}
         return_info = []
+
+        # jsonBody = json.loads(request.body)
+        username = request.GET.get('username', 'test_user')
+
         competition_objects = Topic.objects.filter(creation_time__gte=(date.today() - timedelta(days=1))).order_by('-creation_time')
         for topic in competition_objects.iterator():
             temp_return_info = {}
@@ -129,6 +156,7 @@ class TopicsViewSet(viewsets.ModelViewSet):
             temp_return_info['upvotes'] = topic.votes.upvote
             temp_return_info['downvotes'] = topic.votes.downvote
             temp_return_info['id'] = topic.id
+            temp_return_info['userEntry'] = UserSubmission.objects.filter(user=StageUser.objects.get(username=username), topic=topic).exists()
             return_info.append(temp_return_info)
 
         return(JsonResponse(return_info, safe=False))

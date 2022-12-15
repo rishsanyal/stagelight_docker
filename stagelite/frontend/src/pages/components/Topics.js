@@ -9,19 +9,18 @@ import TopicDisplay from './TopicDisplay';
 function Topics(props) {
 
   const [topics, setTopics] = useState([]);
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     getTopicsList().then(items => {
-      if(mounted) {
-        setTopics(items['topics'])
+      if(mounted && items) {
+        setTopics(items)
         }
     })
 
     return () => mounted = false;
   }, []);
-
-
 
   return (
     <div>
@@ -31,7 +30,7 @@ function Topics(props) {
       {topics.map((topic) => (
         <div>
           {/* {topic.title} */}
-          <TopicDisplay title={topic.title} upvotes={topic.upvotes} downvotes={topic.downvotes} id={topic.id}/>
+          <TopicDisplay title={topic.title} upvotes={topic.upvotes} downvotes={topic.downvotes} id={topic.id} userentry={topic.userEntry} update={update} setUpdate={setUpdate}/>
         </div>
       ))}
 

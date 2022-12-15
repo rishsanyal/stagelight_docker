@@ -10,13 +10,39 @@ import json
 
 def baseRequest(request):
     if request.user.is_authenticated:
-        response = HttpResponseRedirect("http://0.0.0.0:3000/topics/")
+        response = HttpResponseRedirect("http://localhost:3000/topics/")
         response.set_cookie('username', request.user.username)
         return response
 
 def hello(request):
-    response = baseRequest(request)
-    return response
+    if request.user.is_authenticated:
+        response = HttpResponseRedirect("http://127.0.0.1:3000/topics/")
+        response.set_cookie('username', request.user.username, 3600)
+        return response
+
+def vote(request):
+    vote_type = request.GET.get('type')
+    topic_id = int(request.GET.get('id'))
+
+    topic = Topic.objects.get(id=topic_id)
+    votes = topic.votes
+
+    if vote_type == 'upvote':
+        votes.upvote = topic.votes.upvote + 1
+        votes.save()
+    elif vote_type == 'downvote':
+        votes.downvote = topic.votes.downvote + 1
+        votes.save()
+
+    print(vote_type == 'up')
+
+    votes.save()
+    topic.save()
+
+    topic.votes.refresh_from_db()
+    topic.refresh_from_db()
+
+    return(HttpResponse(topic.votes.upvote))
 
 def competition_info(request):
     baseRequest(request)

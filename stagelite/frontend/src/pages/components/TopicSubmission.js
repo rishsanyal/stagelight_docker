@@ -11,8 +11,9 @@ import { getSpecificTopicsList } from '../../redux/actions/TopicsActions';
 
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState } from 'draft-js';
+import { EditorState, ContentState } from 'draft-js';
 
+import Cookies from 'js-cookie';
 
 function CustomOption(props) {
     return (
@@ -27,6 +28,8 @@ function TopicSubmission() {
     const [searchParams, setSearchParams] = useSearchParams();
     var topicId = searchParams.get("topicId");
     const [editorState, setEditorState] = React.useState(EditorState.createEmpty());
+    const username = Cookies.get('username')
+    const [userSubmitted, setUserSubmitted] = React.useState(false);
 
     const [topic, setTopic] = React.useState({
         title: "",
@@ -43,6 +46,15 @@ function TopicSubmission() {
             }
         }).then(() => {
             console.log(topic);
+        })
+
+        getUserSubmission(username, topicId).then(items => {
+            if(mounted) {
+                if (items) {
+                    setEditorState(EditorState.createWithContent(ContentState.createFromText(items.textEntry)));
+                    setUserSubmitted(true);
+                }
+            }
         })
 
         return () => mounted = false;
@@ -65,12 +77,16 @@ function TopicSubmission() {
             body: JSON.stringify({
                 id: topicID,
                 textEntry: plainText,
+                username: username
             }),
             headers: {
               'Content-type': 'application/json; charset=UTF-8',
             },
           }).then((response) => {
             console.log(response.data);
+            if (response.status === 201 || response.status === 200) {
+                setUserSubmitted(true);
+            }
           }).catch((error) => {
             console.log(error);
           })
@@ -96,7 +112,7 @@ function TopicSubmission() {
                     wrapperClassName="demo-wrapper"
                     editorClassName="demo-editor"
                     onEditorStateChange={onEditorStateChange}
-                    toolbarCustomButtons={[<CustomOption onClick={submit(topic.id)}/>]}
+                    toolbarCustomButtons={[<CustomOption onClick={() => submit(topic.id)}/>]}
                 />
             </div>
 

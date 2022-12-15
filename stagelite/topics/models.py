@@ -54,7 +54,8 @@ class Topic(BaseTopicModel):
     # genre = FUTURE REQUEST
 
     def save(self, *args, **kwargs):
-        self.votes = Votes.objects.create()
+        # if not (self.votes):
+        #     self.votes = Votes.objects.create()
         super(Topic, self).save(*args, **kwargs)
 
 
